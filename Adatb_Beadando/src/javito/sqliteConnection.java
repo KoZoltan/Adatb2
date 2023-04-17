@@ -10,7 +10,7 @@ public class sqliteConnection {
 		try {
 			Class.forName("org.sqlite.JDBC");
 			Connection conn = DriverManager
-					.getConnection("jdbc:sqlite:C:\\Users\\kocsi\\Documents\\sqlite\\Beadando_masodik.db");
+					.getConnection("jdbc:sqlite:C:\\************\\Adatb_Beadando\\Beadando_masodik.db");
 			DatabaseMetaData databaseMetaData = conn.getMetaData();
 			String productName = databaseMetaData.getDatabaseProductName();
 			String productVersion = databaseMetaData.getDatabaseProductVersion();
