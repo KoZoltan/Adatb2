@@ -1,0 +1,88 @@
+tablak:
+
+DOLGOZO		 KOD_NEV , NEV , JELSZO , EMAIL , CIM , MUNKAKOR 
+VEVO 			 VKOD , VNEV , VCIM , SZULDAT 
+SZERVIZ 		 SOR_SZAM , MARKA , HIBA , VNEV , VCIM , KOD_NEV
+LAPTOP 		 SOR_SZAM,  MARKA , MEMORIA , TARHELY , OS , AR 
+ELADAS 		 ELADAS_KOD , SOR_SZAM , KOD_NEV , VKOD, AR
+FELHASZNALO        KOD_NEV,JELSZO FROM DOLGOZO;
+
+Magyarazat:
+A bejelentkezés a FELHASZNALO tábla alapján működik ami a DOLGOZO-ból lett létrehozva
+HOZZÁFÉRÉS: munkakör alapján van meghatározva, 
+	munkakör: SZERELO : SZERVIZ TABLA, 
+		    ADMIN   : Minden tábla
+                ELADO   : ELADAS TABLA
+
+
+SQL parancsok
+
+CREATE TABLE ELADAS (ELADAS_KOD VARCHAR(10) PRIMARY KEY, SOR_SZAM VARCHAR(30) UNIQUE, KOD_NEV VARCHAR(15), VKOD  VARCHAR(30), AR INT,FOREIGN KEY(SOR_SZAM) REFERENCES LAPTOP(SOR_SZAM), FOREIGN KEY(KOD_NEV ) REFERENCES DOLGOZO(KOD_NEV), FOREIGN KEY(VKOD) REFERENCES VEVO(VKOD));
+
+CREATE TABLE DOLGOZO (KOD_NEV VARCHAR(15) PRIMARY KEY , NEV VARCHAR(30),JELSZO VARCHAR(10), EMAIL VARCHAR (30), CIM VARCHAR(30), MUNKAKOR VARCHAR(10));
+
+CREATE TABLE VEVO(VKOD VARCHAR(30) PRIMARY KEY, VNEV VARCHAR(30), VCIM VARCHAR(30), SZULDAT VARCHAR(30));
+
+/*CREATE TABLE SZALLITAS(!!alter!!szallitasszam PRIMARY KEY VARCHAR(30),VKOD VARCHAR(30),KOD_NEV VARCHAR(15) , VCIM VARCHAR(30), FOREIGN KEY(VKOD) REFERENCES VEVO(VKOD), FOREIGN KEY(KOD_NEV) REFERENCES DOLGOZO(KOD_NEV));*/
+
+CREATE TABLE SZERVIZ(SOR_SZAM VARCHAR(30) PRIMARY KEY, MARKA VARCHAR(30), HIBA VARCHAR(50), VNEV VARCHAR(30), VCIM VARCHAR(30), KOD_NEV VARCHAR(15), FOREIGN KEY(KOD_NEV) REFERENCES DOLGOZO(KOD_NEV ));
+
+CREATE TABLE LAPTOP(SOR_SZAM VARCHAR(30) PRIMARY KEY, MARKA VARCHAR(30), MEMORIA VARCHAR(6), TARHELY VARCHAR(6), OS VARCHAR(10), AR VARCHAR(15));
+
+CREATE VIEW FELHASZNALO AS SELECT KOD_NEV,JELSZO FROM DOLGOZO;
+
+
+INSERT INTO DOLGOZO VALUES('admin','Zoli', '00', 'zozo01', 'Szolnok', 'admin');
+INSERT INTO DOLGOZO VALUES('admin1','Norbi', '01', 'norb01', 'Rudabánya', 'admin');
+INSERT INTO DOLGOZO VALUES('admin2','Angi', '02', 'ang01', 'Abony', 'admin');
+INSERT INTO DOLGOZO VALUES('admin3','Bence', '03', 'benc01', 'Pest', 'admin');
+INSERT INTO DOLGOZO VALUES('elado','Panna', '00', 'hab', 'Szolnok', 'elado');
+INSERT INTO DOLGOZO VALUES('elado1','Gábor', '01', 'laty', 'Szolnok', 'elado');
+INSERT INTO DOLGOZO VALUES('elado2','Lilla', '02', 'akka', 'Szolnok', 'elado');
+INSERT INTO DOLGOZO VALUES('elado3','Áron', '03', 'zozzoloo01', 'Szolnok', 'elado');
+INSERT INTO DOLGOZO VALUES('szerelo','Tomi', '00', 'almaalma', 'Miskolc',  'szerelo');
+INSERT INTO DOLGOZO VALUES('szerelo1','Sanyi', '01', 'nemjuteszembesemmi', 'Szolnok', 'szerelo');
+INSERT INTO DOLGOZO VALUES('szerelo2','Andris', '02', 'megintsemmi', 'Polgár', 'szerelo');
+INSERT INTO DOLGOZO VALUES('szerelo3','Zsolt', '03', 'mukodik', 'Szolnok', 'szerelo');
+
+INSERT INTO VEVO VALUES('00','Zotya','Szolnok','2001/02/07');
+INSERT INTO VEVO VALUES('01','Peti','Szolnok','2001/08/21');
+INSERT INTO VEVO VALUES('02','Norbi','Szolnok','2004/06/09');
+INSERT INTO VEVO VALUES('03','Balázs','Szolnok','2002/05/07');
+INSERT INTO VEVO VALUES('04','Sándor','Szolnok','2006/01/01');
+INSERT INTO VEVO VALUES('05','Áron','Szolnok','2011/05/06');
+
+INSERT INTO LAPTOP VALUES('0011002200','ASUS','16','512','Linux','300000');
+INSERT INTO LAPTOP VALUES('0011002211','ACER','16','512','WINDOWS','350000');
+INSERT INTO LAPTOP VALUES('0011002222','LENOVO','8','1024','Linux','360000');
+INSERT INTO LAPTOP VALUES('0011002233','ACER','32','1024','Windows','1300000');
+INSERT INTO LAPTOP VALUES('0011002244','ASUS','32','1024','Linux','700000');
+
+INSERT INTO SZERVIZ VALUES('0011002255','ASUS','alaplap','Sárosi','Linux','szerelo');
+INSERT INTO SZERVIZ VALUES('0011002266','ACER','memoria','Kocsis','WINDOWS','szerelo1');
+INSERT INTO SZERVIZ VALUES('0011002277','LENOVO','képernyő','Géresi','Linux','szerelo2');
+INSERT INTO SZERVIZ VALUES('0011002288','ACER','32','alaplap','Pehej','szerelo3');
+INSERT INTO SZERVIZ VALUES('0011002299','ASUS','32','tisztítás','Szalomann','szerelo2');
+
+INSERT INTO ELADAS VALUES('el01ad02as03','0011002200','elado1','01','350000');
+
+
+
+
+
+Magyarazat:
+A bejelentkezes a FELHASZNALO tabla alapjan megy ami a DOLGOZO-ból lett létrehozva
+
+HOZZÁFÉRÉS: munkakör alapján van meghatározva, 
+	munkakör: SZERELO : SZERVIZ TABLA, 
+		    ADMIN   : Egybe minden, KIVETEL SZERVIZ TABLA az külön kell
+                ELADO   : LAPTOP TABLA, VEVO TABLA
+                FUTÁR   : VEVO TABLA, SZALLITAS TABLA
+    
+Lekérdezés: Listába adja hozzá a táblaneveket a fentebbi séma szerint. Ha több tábla van akkor inner join.
+
+
+
+
+
+

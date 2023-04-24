@@ -3,9 +3,14 @@ package javito;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -27,6 +32,7 @@ public class AdminEladasPanel extends JFrame {
 	private JTable table;
 	private static String FelhNev;
 	String Tabla = "ELADAS";
+	
 
 
 	/**
@@ -63,6 +69,7 @@ public class AdminEladasPanel extends JFrame {
 		private JLabel lblMunkakor;
 		private JButton btnNewButton_2;
 		private JButton btnNewButton_3;
+		private JButton btnNewButton_4;
 	public AdminEladasPanel() {
 		setFelhNev();
 		connection = sqliteConnection.dbConnection();
@@ -159,6 +166,10 @@ public class AdminEladasPanel extends JFrame {
 		btnNewButton_5.setBounds(10, 11, 110, 23);
 		contentPane.add(btnNewButton_5);
 		
+		btnNewButton_4 = new JButton("Mentés txt-be");
+		btnNewButton_4.setBounds(44, 425, 89, 23);
+		contentPane.add(btnNewButton_4);
+		
 		btnNewButton_5.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -250,7 +261,44 @@ public class AdminEladasPanel extends JFrame {
 
 			}
 		});
+		
+		
+		btnNewButton_4.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					ArrayList<String> txtAdat = new ArrayList();
+					connection = sqliteConnection.dbConnection();
+					String query = "Select * from " + Tabla;
+					PreparedStatement pst = connection.prepareStatement(query);
+					ResultSet rs = pst.executeQuery();
+					table.setModel(DbUtils.resultSetToTableModel(rs));
+					 while (rs.next()) {
+                         String ELADAS_KOD = rs.getString("ELADAS_KOD");
+                         String SOR_SZAM = rs.getString("SOR_SZAM");
+                         String KOD_NEV  = rs.getString("KOD_NEV");
+                         String VKOD = rs.getString("VKOD");
+                         String AR = rs.getString("AR");
+                         txtAdat.add(ELADAS_KOD + " " + SOR_SZAM + " " + KOD_NEV  + " " + VKOD +" "+AR);
+                         writeToFile(txtAdat, "Eladasok.txt");
+                 }
+                 
+					pst.close();
+					rs.close();
+					connection.close();
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+
+			}
+		});
+
 	}
+	
+	
+	
+	
+	
 	public String getFelhNev() {
 		return FelhNev;
 	}
@@ -258,4 +306,18 @@ public class AdminEladasPanel extends JFrame {
 	public void setFelhNev() {
 		FelhNev = Login.getFelhNev();;
 	}
+	 private static void writeToFile(ArrayList<String> list, String path) {
+         BufferedWriter out = null;
+         try {
+                 File file = new File(path);
+                 out = new BufferedWriter(new FileWriter(file, true));
+                 for (Object s : list) {
+                         out.write((String)s);
+                         out.newLine();
+
+                 }
+                 out.close();
+         } catch (IOException e) {
+         }
+ }
 }

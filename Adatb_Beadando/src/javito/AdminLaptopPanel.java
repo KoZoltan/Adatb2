@@ -190,7 +190,7 @@ public class AdminLaptopPanel extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					connection = sqliteConnection.dbConnection();
-					String query = "Insert into "+ Tabla+ "(SOR_SZAM,  MARKA , MEMORIA , TARHELY , OS , AR ) values(?,?,?,?,?,?,)";
+					String query = "Insert into "+ Tabla+ "(SOR_SZAM,  MARKA , MEMORIA , TARHELY , OS , AR ) values(?,?,?,?,?,?)";
 					PreparedStatement pst = connection.prepareStatement(query);
 					pst.setString(1, textField.getText());
 					pst.setString(2, textField_1.getText());

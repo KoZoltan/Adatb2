@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -15,6 +16,9 @@ import javax.swing.JTable;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
+
+import net.proteanit.sql.DbUtils;
+
 import javax.swing.border.EtchedBorder;
 import javax.swing.JTextField;
 import javax.swing.JButton;
@@ -23,13 +27,9 @@ public class EladoKomplexLekerdezes {
 
 	public JFrame frame;
 	private JTable table;
-	private JTextField textField;
 	private JTextField textField_1;
-	private JTextField textField_2;
 	private JTextField textField_3;
-	private JTextField textField_4;
-	String Tabla = "ELADAS";
-
+	
 	/**
 	 * Launch the application.
 	 */
@@ -74,63 +74,36 @@ public class EladoKomplexLekerdezes {
 		
 		JPanel panel_2 = new JPanel();
 		panel_2.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)), "", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		panel_2.setBounds(16, 16, 985, 120);
+		panel_2.setBounds(16, 16, 866, 120);
 		frame.getContentPane().add(panel_2);
 		panel_2.setLayout(null);
 		
 		JPanel panel_1 = new JPanel();
-		panel_1.setBounds(42, 16, 784, 97);
+		panel_1.setBounds(42, 16, 531, 97);
 		panel_2.add(panel_1);
 		panel_1.setLayout(null);
 		panel_1.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)), "Felt\u00E9tel", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		
-		JCheckBox chckbxNewCheckBox_1 = new JCheckBox("ELADAS_KOD");
-		chckbxNewCheckBox_1.setBounds(6, 16, 97, 23);
-		panel_1.add(chckbxNewCheckBox_1);
-		
 		JCheckBox chckbxMarka_1 = new JCheckBox("SOR_SZAM");
-		chckbxMarka_1.setBounds(6, 42, 97, 23);
+		chckbxMarka_1.setBounds(6, 16, 97, 23);
 		panel_1.add(chckbxMarka_1);
-		
-		JCheckBox chckbxNewCheckBox_1_1_2 = new JCheckBox("KOD_NEV");
-		chckbxNewCheckBox_1_1_2.setBounds(6, 68, 97, 23);
-		panel_1.add(chckbxNewCheckBox_1_1_2);
 		
 		JCheckBox chckbxVnev_1 = new JCheckBox("VKOD");
 		chckbxVnev_1.setBounds(260, 16, 97, 23);
 		panel_1.add(chckbxVnev_1);
 		
-		JCheckBox chckbxVcim_1 = new JCheckBox("AR");
-		chckbxVcim_1.setBounds(260, 42, 97, 23);
-		panel_1.add(chckbxVcim_1);
-		
-		textField = new JTextField();
-		textField.setBounds(109, 17, 138, 20);
-		panel_1.add(textField);
-		textField.setColumns(10);
-		
 		textField_1 = new JTextField();
 		textField_1.setColumns(10);
-		textField_1.setBounds(109, 43, 138, 20);
+		textField_1.setBounds(109, 17, 138, 20);
 		panel_1.add(textField_1);
-		
-		textField_2 = new JTextField();
-		textField_2.setColumns(10);
-		textField_2.setBounds(109, 69, 138, 20);
-		panel_1.add(textField_2);
 		
 		textField_3 = new JTextField();
 		textField_3.setColumns(10);
 		textField_3.setBounds(363, 16, 138, 20);
 		panel_1.add(textField_3);
 		
-		textField_4 = new JTextField();
-		textField_4.setColumns(10);
-		textField_4.setBounds(363, 42, 138, 20);
-		panel_1.add(textField_4);
-		
 		JButton btnNewButton = new JButton("Lekérdezés");
-		btnNewButton.setBounds(854, 37, 89, 59);
+		btnNewButton.setBounds(742, 29, 89, 59);
 		panel_2.add(btnNewButton);
 		
 		
@@ -149,33 +122,51 @@ public class EladoKomplexLekerdezes {
 				
 				
 				try {
-					
-					String whereString= " Where ? and ? and ? and ? and ? );";
-					
+					String query;
 					connection = sqliteConnection.dbConnection();
 					DatabaseMetaData databaseMetaData = connection.getMetaData();
-					String query = "Select  * from "+ Tabla +whereString;
-					PreparedStatement pst = connection.prepareStatement(query);
-				
+					if(chckbxMarka_1.isSelected()&&chckbxVnev_1.isSelected()) {
+						query= "Select * from ELADAS where SOR_SZAM= ? and VKOD= ? ;" ;
+						PreparedStatement pst = connection.prepareStatement(query);
+						pst.setString(1, textField_1.getText());
+						pst.setString(2, textField_3.getText());
+						ResultSet rs = pst.executeQuery();
+						table.setModel(DbUtils.resultSetToTableModel(rs));
+						JOptionPane.showMessageDialog(null, "Sikeres adatfelvitel");
+						pst.close();;
+						rs.close();
+					}
+					else if(chckbxMarka_1.isSelected()) {
+						query = "Select * from ELADAS where SOR_SZAM= ? );" ;
+						PreparedStatement pst = connection.prepareStatement(query);
+						pst.setString(1,textField_1.getText());
+						ResultSet rs = pst.executeQuery();
+						table.setModel(DbUtils.resultSetToTableModel(rs));
+						JOptionPane.showMessageDialog(null, "Sikeres adatfelvitel");
+						pst.close();
+						rs.close();
+					}
+					else if(chckbxVnev_1.isSelected()) {
+						query = "Select * from ELADAS where VKOD= ? );" ;
+						PreparedStatement pst = connection.prepareStatement(query);
+						pst.setString(1,textField_3.getText());
+						ResultSet rs = pst.executeQuery();
+						table.setModel(DbUtils.resultSetToTableModel(rs));
+						JOptionPane.showMessageDialog(null, "Sikeres adatfelvitel");
+						pst.close();
+						rs.close();
+					}
+					else {
+						JOptionPane.showMessageDialog(null, "Hibas lekerdezes");
+					}
 					
 					
 					
-					String ELADAS_KOD;
-					pst.setString(1, ELADAS_KOD= textField.getText());
-					String SOR_SZAM;
-					pst.setString(2, SOR_SZAM= textField_1.getText());
-					String KOD_NEV;
-					pst.setString(3, KOD_NEV= textField_2.getText());
-					String VKOD;
-					pst.setString(4, VKOD= textField_3.getText());
-					String AR;
-					pst.setString(5, AR= textField_4.getText());
 					
-				
-					pst.execute();
+					
+					
 
-					JOptionPane.showMessageDialog(null, "Sikeres adatfelvitel");
-					pst.close();
+					
 
 					connection.close();
 				} catch (Exception e1) {

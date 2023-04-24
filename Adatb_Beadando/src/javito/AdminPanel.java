@@ -61,7 +61,7 @@ public class AdminPanel {
 		panel.setBorder(new TitledBorder(
 				new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)),
 				"T\u00E1bl\u00E1k", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		panel.setBounds(33, 51, 107, 248);
+		panel.setBounds(33, 25, 107, 248);
 		contentPane.add(panel);
 		panel.setLayout(null);
 
@@ -84,7 +84,23 @@ public class AdminPanel {
 		JButton btnNewButton_1_4 = new JButton("Eladás");
 		btnNewButton_1_4.setBounds(6, 204, 95, 33);
 		panel.add(btnNewButton_1_4);
+		
+		JButton btnNewButton_1_2_1 = new JButton("Eladott Laptop");
+		btnNewButton_1_2_1.setBounds(23, 284, 136, 33);
+		contentPane.add(btnNewButton_1_2_1);
 
+		
+		
+		btnNewButton_1_2_1.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				AdminEladottLaptop frame = new AdminEladottLaptop();
+				frame.setVisible(true);
+
+			}
+		});
+		
 		btnNewButton_1.addActionListener(new ActionListener() {
 
 			@Override
@@ -143,5 +159,4 @@ public class AdminPanel {
 			}
 		});
 	}
-
 }

@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -14,6 +15,9 @@ import javax.swing.JTable;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
+
+import net.proteanit.sql.DbUtils;
+
 import javax.swing.border.EtchedBorder;
 import javax.swing.JTextField;
 import javax.swing.JButton;
@@ -25,10 +29,7 @@ public class SzereloKomplexLekerdezes {
 	private JTextField textField;
 	private JTextField textField_1;
 	private JTextField textField_2;
-	private JTextField textField_3;
-	private JTextField textField_4;
-	private JTextField textField_5;
-	String Tabla = "SZERVIZ";
+
 
 
 
@@ -81,7 +82,7 @@ public class SzereloKomplexLekerdezes {
 		panel_2.setLayout(null);
 		
 		JPanel panel_1 = new JPanel();
-		panel_1.setBounds(297, 16, 529, 97);
+		panel_1.setBounds(297, 16, 286, 97);
 		panel_2.add(panel_1);
 		panel_1.setLayout(null);
 		panel_1.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)), "Felt\u00E9tel", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
@@ -98,47 +99,20 @@ public class SzereloKomplexLekerdezes {
 		chckbxNewCheckBox_1_1_2.setBounds(6, 68, 97, 23);
 		panel_1.add(chckbxNewCheckBox_1_1_2);
 		
-		JCheckBox chckbxVnev_1 = new JCheckBox("VNEV");
-		chckbxVnev_1.setBounds(260, 16, 97, 23);
-		panel_1.add(chckbxVnev_1);
-		
-		JCheckBox chckbxVcim_1 = new JCheckBox("VCIM");
-		chckbxVcim_1.setBounds(260, 42, 97, 23);
-		panel_1.add(chckbxVcim_1);
-		
-		JCheckBox chckbxNewCheckBox_1_1_1_1 = new JCheckBox("KOD_NEV");
-		chckbxNewCheckBox_1_1_1_1.setBounds(260, 68, 97, 23);
-		panel_1.add(chckbxNewCheckBox_1_1_1_1);
-		
 		textField = new JTextField();
-		textField.setBounds(109, 17, 138, 20);
+		textField.setBounds(109, 17, 167, 20);
 		panel_1.add(textField);
 		textField.setColumns(10);
 		
 		textField_1 = new JTextField();
 		textField_1.setColumns(10);
-		textField_1.setBounds(109, 43, 138, 20);
+		textField_1.setBounds(109, 43, 167, 20);
 		panel_1.add(textField_1);
 		
 		textField_2 = new JTextField();
 		textField_2.setColumns(10);
-		textField_2.setBounds(109, 69, 138, 20);
+		textField_2.setBounds(109, 69, 167, 20);
 		panel_1.add(textField_2);
-		
-		textField_3 = new JTextField();
-		textField_3.setColumns(10);
-		textField_3.setBounds(363, 16, 138, 20);
-		panel_1.add(textField_3);
-		
-		textField_4 = new JTextField();
-		textField_4.setColumns(10);
-		textField_4.setBounds(363, 42, 138, 20);
-		panel_1.add(textField_4);
-		
-		textField_5 = new JTextField();
-		textField_5.setColumns(10);
-		textField_5.setBounds(363, 68, 138, 20);
-		panel_1.add(textField_5);
 		
 		JButton btnNewButton = new JButton("Lekérdezés");
 		btnNewButton.setBounds(854, 37, 89, 59);
@@ -160,32 +134,84 @@ public class SzereloKomplexLekerdezes {
 				
 				
 				try {
-					
-					String whereString= " Where ?,?,?,?,?,?);";
-					
 					connection = sqliteConnection.dbConnection();
-					String query = "Select  * from "+ Tabla+whereString;
-					PreparedStatement pst = connection.prepareStatement(query);
-				
 					
-					String SOR_SZAM;
-					pst.setString(7, SOR_SZAM= textField.getText());
-					String MARKA;
-					pst.setString(8, MARKA= textField_1.getText());
-					String HIBA;
-					pst.setString(9, HIBA= textField_2.getText());
-					String VNEV;
-					pst.setString(10, VNEV= textField_3.getText());
-					String VCIM;
-					pst.setString(11, VCIM= textField_4.getText());
-					String KOD_NEV;
-					pst.setString(12, KOD_NEV= textField_5.getText());
-				
-					pst.execute();
-
-					JOptionPane.showMessageDialog(null, "Sikeres adatfelvitel");
-					pst.close();
-
+					if(chckbxNewCheckBox_1.isSelected()&&chckbxMarka_1.isSelected()&&chckbxNewCheckBox_1_1_2.isSelected()) {
+						String query = "Select  * from SZERVIZ WHERE SOR_SZAM=  ? AND MARKA= ? AND HIBA= ?";
+						PreparedStatement pst = connection.prepareStatement(query);
+						pst.setString(1, textField.getText());
+						pst.setString(2, textField_1.getText());
+						pst.setString(3, textField_2.getText());
+						ResultSet rs = pst.executeQuery();
+						table.setModel(DbUtils.resultSetToTableModel(rs));
+						JOptionPane.showMessageDialog(null, "Sikeres adatfelvitel");
+						pst.close();
+						rs.close();
+					}
+					else if(chckbxNewCheckBox_1.isSelected()&&chckbxMarka_1.isSelected()) {
+						String query = "Select  * from SZERVIZ WHERE SOR_SZAM = ? AND MARKA= ? ";
+						PreparedStatement pst = connection.prepareStatement(query);
+						pst.setString(1,  textField.getText());
+						pst.setString(2, textField_1.getText());
+						ResultSet rs = pst.executeQuery();
+						table.setModel(DbUtils.resultSetToTableModel(rs));
+						JOptionPane.showMessageDialog(null, "Sikeres adatfelvitel");
+						pst.close();
+						rs.close();
+					}else if(chckbxMarka_1.isSelected()&&chckbxNewCheckBox_1_1_2.isSelected()) {
+						String query = "Select  * from SZERVIZ WHERE HIBA= ? AND MARKA= ? ";
+						PreparedStatement pst = connection.prepareStatement(query);
+						pst.setString(1, textField_2.getText());
+						pst.setString(2, textField_1.getText());
+						ResultSet rs = pst.executeQuery();
+						table.setModel(DbUtils.resultSetToTableModel(rs));
+						JOptionPane.showMessageDialog(null, "Sikeres adatfelvitel");
+						pst.close();
+						rs.close();
+					}else if(chckbxNewCheckBox_1.isSelected()&&chckbxNewCheckBox_1_1_2.isSelected()) {
+						String query = "Select  * from SZERVIZ WHERE SOR_SZAM= ? AND HIBA= ? ";
+						PreparedStatement pst = connection.prepareStatement(query);
+						pst.setString(1, textField.getText());
+						pst.setString(2, textField_2.getText());
+						ResultSet rs = pst.executeQuery();
+						table.setModel(DbUtils.resultSetToTableModel(rs));
+						JOptionPane.showMessageDialog(null, "Sikeres adatfelvitel");
+						pst.close();
+						rs.close();
+					}else if(chckbxNewCheckBox_1.isSelected()) {
+						String query = "Select  * from SZERVIZ WHERE SOR_SZAM= ? ";
+						PreparedStatement pst = connection.prepareStatement(query);
+						pst.setString(1, textField.getText());
+						ResultSet rs = pst.executeQuery();
+						table.setModel(DbUtils.resultSetToTableModel(rs));
+						JOptionPane.showMessageDialog(null, "Sikeres adatfelvitel");
+						pst.close();
+						rs.close();
+					}
+					else if(chckbxNewCheckBox_1_1_2.isSelected()) {
+						String query = "Select  * from  SZERVIZ WHERE HIBA =? ";
+						PreparedStatement pst = connection.prepareStatement(query);
+						pst.setString(1, textField_2.getText());
+						ResultSet rs = pst.executeQuery();
+						table.setModel(DbUtils.resultSetToTableModel(rs));
+						JOptionPane.showMessageDialog(null, "Sikeres adatfelvitel");
+						pst.close();
+						rs.close();
+					}
+					else if(chckbxMarka_1.isSelected()) {
+						String query = "Select * from SZERVIZ WHERE MARKA= ? ";
+						PreparedStatement pst = connection.prepareStatement(query);
+						pst.setString(1,  textField_1.getText());
+						ResultSet rs = pst.executeQuery();
+						table.setModel(DbUtils.resultSetToTableModel(rs));
+						JOptionPane.showMessageDialog(null, "Sikeres adatfelvitel");
+						pst.close();
+						rs.close();
+					}
+					else {
+						JOptionPane.showMessageDialog(null, "Hibas adatfelvitel");
+					}
+					
 					connection.close();
 				} catch (Exception e1) {
 					e1.printStackTrace();
